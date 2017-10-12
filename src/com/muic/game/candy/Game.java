@@ -1,5 +1,5 @@
 package com.muic.game.candy;
-//update this
+//update this one
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -77,7 +77,7 @@ public class Game extends Canvas implements Runnable {
     public void run() {
         init();
         long lastTime = System.nanoTime();
-        final double amoutOfTicks = 10.0;
+        final double amoutOfTicks = 60.0;
         double ns = 1000000000 / amoutOfTicks;
         double delta = 0;
         int updates = 0;
