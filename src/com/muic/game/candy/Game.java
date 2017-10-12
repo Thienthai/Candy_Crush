@@ -1,5 +1,5 @@
 package com.muic.game.candy;
-
+//update this
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -67,8 +67,8 @@ public class Game extends Canvas implements Runnable {
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
         Candies candies = new Candies();
         g.drawImage(background, 0, 0, this);
+        g.drawRect(32,57,85,75);
         candies.render(board, g, this);
-        g.drawRect(x,0,30,30);
         g.dispose();
         bs.show();
     }
@@ -109,7 +109,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void tick() {
-        x++;
+
     }
 
     public static void main(String args[]){
