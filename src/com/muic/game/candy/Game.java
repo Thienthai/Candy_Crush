@@ -2,22 +2,38 @@ package com.muic.game.candy;
 //update this
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
 
-public class Game extends Canvas implements Runnable {
+public class Game extends Canvas implements Runnable,MouseListener{
 
     private boolean running = false;
+    private int change = 5;
     private Thread thread;
     private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
     private BufferedImage background = null;
     BufferedImage fish = null;
     private int x = 0;
-    private int[][] board = new int[7][6];
+    private Block[][] board = new Block[7][6];
     Random rand = new Random();
+    BufferedImageLoader loader = new BufferedImageLoader();
     private boolean initRen = true;
+    private BufferedImage red = loader.loadImage("red.png");
+    private BufferedImage yellow = loader.loadImage("yellow.png");
+    private BufferedImage blue = loader.loadImage("blue.png");
+    private BufferedImage brown = loader.loadImage("brown.png");
+    private BufferedImage green = loader.loadImage("green.png");
+    private BufferedImage purple = loader.loadImage("purple.png");
+    private int getMouseXpos = -1;
+    private int getMouseYpos = -1;
+
+    public Game() throws IOException {
+        addMouseListener(this);
+    }
 
     private synchronized void start(){
         if(running)
@@ -52,7 +68,8 @@ public class Game extends Canvas implements Runnable {
         for(int i = 0;i < 7;i++){
             for(int j = 0;j < 6;j++){
                 int  n = rand.nextInt(6) + 1;
-                board[i][j] = n;
+                Block b = new Block(j,i,n);
+                board[i][j] = b;
             }
         }
     }
@@ -65,10 +82,33 @@ public class Game extends Canvas implements Runnable {
         }
         Graphics g = bs.getDrawGraphics();
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
-        Candies candies = new Candies();
+//        Candies candies = new Candies();
         g.drawImage(background, 0, 0, this);
-        g.drawRect(32,57,85,75);
-        candies.render(board, g, this);
+//        g.drawRect(32,57,85,75);
+//        candies.render(board, g, this);
+        for(int i = 0;i<7;i++){
+            for(int j = 0;j<6;j++){
+                Block b = board[i][j];
+                if(b.getValue() == 1){
+                    g.drawImage(red,b.getX(),b.getY(),this);
+                }
+                if(b.getValue() == 2){
+                    g.drawImage(blue,b.getX(),b.getY(),this);
+                }
+                if(b.getValue() == 3){
+                    g.drawImage(green,b.getX(),b.getY(),this);
+                }
+                if(b.getValue() == 4){
+                    g.drawImage(yellow,b.getX(),b.getY(),this);
+                }
+                if(b.getValue() == 5){
+                    g.drawImage(brown,b.getX(),b.getY(),this);
+                }
+                if(b.getValue() == 6){
+                    g.drawImage(purple,b.getX(),b.getY(),this);
+                }
+            }
+        }
         g.dispose();
         bs.show();
     }
@@ -76,6 +116,7 @@ public class Game extends Canvas implements Runnable {
     @Override
     public void run() {
         init();
+        Block b = board[0][0];
         long lastTime = System.nanoTime();
         final double amoutOfTicks = 10.0;
         double ns = 1000000000 / amoutOfTicks;
@@ -88,10 +129,11 @@ public class Game extends Canvas implements Runnable {
             delta += (now - lastTime) / ns;
             lastTime = now;
             if(delta >= 1){
-                tick();
+                b.setVelX(1);
                 updates++;
                 delta--;
             }
+            tick();
             try {
                 render();
             } catch (IOException e) {
@@ -100,7 +142,7 @@ public class Game extends Canvas implements Runnable {
             frames++;
             if(System.currentTimeMillis() - timer > 1000){
                 timer += 1000;
-                System.out.println(updates + " Ticks,Fps " + frames);
+                //System.out.println(updates + " Ticks,Fps " + frames);
                 updates = 0;
                 frames = 0;
             }
@@ -112,7 +154,7 @@ public class Game extends Canvas implements Runnable {
 
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) throws IOException {
         Game game = new Game();
         game.setPreferredSize(new Dimension(700,600));
         game.setMaximumSize(new Dimension(700,600));
@@ -131,4 +173,60 @@ public class Game extends Canvas implements Runnable {
     }
 
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+        System.out.println(e.getX()+" "+e.getY());
+        if(34 <= e.getX() && e.getX() <= 118){
+            getMouseXpos = 0;
+        }else if(121 <= e.getX() && e.getX() <= 201){
+            getMouseXpos = 1;
+        }else if(206 <= e.getX() && e.getX() <= 287){
+            getMouseXpos = 2;
+        }else if(291<= e.getX() && e.getX() <= 372){
+            getMouseXpos = 3;
+        }else if(377 <= e.getX() && e.getX() <= 455){
+            getMouseXpos = 4;
+        }else if(464 <= e.getX() && e.getX() <= 541){
+            getMouseXpos = 5;
+        }
+
+        if(61 <= e.getY() && e.getY() <= 131){
+            getMouseYpos = 0;
+        }else if(137 <= e.getY() && e.getY() <= 204){
+            getMouseYpos = 1;
+        }else if(208 <= e.getY() && e.getY() <= 273){
+            getMouseYpos = 2;
+        }else if(281 <= e.getY() && e.getY() <= 346){
+            getMouseYpos = 3;
+        }else if(350 <= e.getY() && e.getY() <= 415){
+            getMouseYpos = 4;
+        }else if(420 <= e.getY() && e.getY() <= 486){
+            getMouseYpos = 5;
+        }else if(491 <= e.getY() && e.getY() <= 561){
+            getMouseYpos = 6;
+        }
+
+        System.out.println(getMouseXpos + " " + getMouseYpos);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 }
