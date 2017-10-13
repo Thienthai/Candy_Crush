@@ -7,20 +7,31 @@ public class Block {
     private int value;
     private int[] pos;
     private int VelX = 0;
+    private int VelY = 0;
+    private Point setPoint;
+
+    public boolean isSwitchtrig;
 
     public Block(int x,int y,int value){
         pos = getPosition(x,y);
         this.x = pos[0];
         this.y = pos[1];
         this.value = value;
+        this.setPoint = new Point(0,0);
+        this.isSwitchtrig = false;
     }
 
     public void tick(){
         x+=VelX;
+        y+=VelY;
     }
 
     public void setVelX(int VelX){
         this.VelX = VelX;
+    }
+
+    public void setVelY(int VelY){
+        this.VelY = VelY;
     }
 
     public int getX() {
@@ -64,6 +75,19 @@ public class Block {
         if(y == 5){a[1] = 58+(75*5)-18;}
         if(y == 6){a[1] = 58+(75*6)-21;}
         return a;
+    }
+
+    public void setSlidepoint(Point p){
+        setPoint.x = p.x;
+        setPoint.y = p.y;
+    }
+
+    public Point getSlidepoint(){
+        return setPoint;
+    }
+
+    public void setSwitchtrig(boolean switchtrig) {
+        isSwitchtrig = switchtrig;
     }
 
 }

@@ -30,6 +30,12 @@ public class Game extends Canvas implements Runnable,MouseListener{
     private BufferedImage purple = loader.loadImage("purple.png");
     private int getMouseXpos = -1;
     private int getMouseYpos = -1;
+    private int isSwitch = 0;
+    private boolean getDes = true;
+    private boolean getOri = true;
+    private Block switchOrigin = null;
+    private Block getSwitchDes = null;
+    private boolean switchSelect = false;
 
     public Game() throws IOException {
         addMouseListener(this);
@@ -90,25 +96,35 @@ public class Game extends Canvas implements Runnable,MouseListener{
             for(int j = 0;j<6;j++){
                 Block b = board[i][j];
                 if(b.getValue() == 1){
-                    g.drawImage(red,b.getX(),b.getY(),this);
+                    setPosition(g,b,red);
+                    //g.drawImage(red,b.getX(),b.getY(),this);
                 }
                 if(b.getValue() == 2){
-                    g.drawImage(blue,b.getX(),b.getY(),this);
+                    setPosition(g,b,blue);
+                    //g.drawImage(blue,b.getX(),b.getY(),this);
                 }
                 if(b.getValue() == 3){
-                    g.drawImage(green,b.getX(),b.getY(),this);
+                    setPosition(g,b,green);
+                    //g.drawImage(green,b.getX(),b.getY(),this);
                 }
                 if(b.getValue() == 4){
-                    g.drawImage(yellow,b.getX(),b.getY(),this);
+                    setPosition(g,b,yellow);
+                    //g.drawImage(yellow,b.getX(),b.getY(),this);
                 }
                 if(b.getValue() == 5){
-                    g.drawImage(brown,b.getX(),b.getY(),this);
+                    setPosition(g,b,brown);
+                    //g.drawImage(brown,b.getX(),b.getY(),this);
                 }
                 if(b.getValue() == 6){
-                    g.drawImage(purple,b.getX(),b.getY(),this);
+                    setPosition(g,b,purple);
+                    //g.drawImage(purple,b.getX(),b.getY(),this);
                 }
             }
         }
+//        if(switchOrigin != null && getSwitchDes != null){
+//            SwitchRender sr = new SwitchRender();
+//            sr.switchFunc(switchOrigin,getSwitchDes,board);
+//        }
         g.dispose();
         bs.show();
     }
@@ -116,7 +132,7 @@ public class Game extends Canvas implements Runnable,MouseListener{
     @Override
     public void run() {
         init();
-        Block b = board[0][0];
+        //Block b = board[0][0];
         long lastTime = System.nanoTime();
         final double amoutOfTicks = 10.0;
         double ns = 1000000000 / amoutOfTicks;
@@ -129,7 +145,7 @@ public class Game extends Canvas implements Runnable,MouseListener{
             delta += (now - lastTime) / ns;
             lastTime = now;
             if(delta >= 1){
-                b.setVelX(1);
+                //b.setVelX(1);
                 updates++;
                 delta--;
             }
@@ -151,7 +167,30 @@ public class Game extends Canvas implements Runnable,MouseListener{
     }
 
     private void tick() {
+        if(isSwitch != 0) {
+            if(isSwitch == 1) {
+                switchOrigin = board[getMouseYpos][getMouseXpos];
+            }else if(isSwitch == 2){
+                getSwitchDes = board[getMouseYpos][getMouseXpos];
+                System.out.println("get error " + getSwitchDes.getX());
+                switchOrigin.setSlidepoint(new Point(getSwitchDes.getX(),getSwitchDes.getY()));
+                getSwitchDes.setSlidepoint(new Point(switchOrigin.getX(),getSwitchDes.getY()));
+//                //switchSelect = true;
+                switchOrigin.setSwitchtrig(true);
+                getSwitchDes.setSwitchtrig(true);
+//                System.out.println("switch triggered");
+                isSwitch = 0;
+            }
+        }
 
+        //if(sw){
+            //System.out.println("come here");
+//            switchOrigin.setSlidepoint(getSwitchDes.getSlidepoint().y,getSwitchDes.getSlidepoint().x);
+//            getSwitchDes.setSlidepoint(switchOrigin.getSlidepoint().y,getSwitchDes.getSlidepoint().x);
+//            switchOrigin = null;
+//            getSwitchDes = null;
+//            isSwitch = false;
+        //}
     }
 
     public static void main(String args[]) throws IOException {
@@ -211,7 +250,7 @@ public class Game extends Canvas implements Runnable,MouseListener{
         }else if(491 <= e.getY() && e.getY() <= 561){
             getMouseYpos = 6;
         }
-
+        isSwitch += 1;
         System.out.println(getMouseXpos + " " + getMouseYpos);
     }
 
@@ -228,5 +267,30 @@ public class Game extends Canvas implements Runnable,MouseListener{
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    public void setPosition(Graphics g,Block b,BufferedImage img){
+        if(!b.isSwitchtrig){
+            g.drawImage(img,b.getX(),b.getY(),this);
+        }else{
+            Point des = b.getSlidepoint();
+            if(b.getX() > des.x && b.getY() > des.y){
+                b.setVelX(-1);
+                b.setVelY(-1);
+                g.drawImage(img,b.getX(),b.getY(),this);
+            }else if(b.getX() > des.x && b.getY() < des.y){
+                b.setVelX(-1);
+                b.setVelY(1);
+                g.drawImage(img,b.getX(),b.getY(),this);
+            }else if(b.getX() < des.x && b.getY() < des.y){
+                b.setVelX(1);
+                b.setVelY(1);
+                g.drawImage(img,b.getX(),b.getY(),this);
+            }else if(b.getX() < des.x && b.getY() > des.y){
+                b.setVelX(1);
+                b.setVelY(-1);
+                g.drawImage(img,b.getX(),b.getY(),this);
+            }
+        }
     }
 }
