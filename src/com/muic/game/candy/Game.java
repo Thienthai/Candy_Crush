@@ -120,6 +120,7 @@ public class Game extends Canvas implements Runnable,MouseListener{
                     //g.drawImage(purple,b.getX(),b.getY(),this);
                 }
             }
+
         }
 //        if(switchOrigin != null && getSwitchDes != null){
 //            SwitchRender sr = new SwitchRender();
@@ -174,7 +175,7 @@ public class Game extends Canvas implements Runnable,MouseListener{
                 getSwitchDes = board[getMouseYpos][getMouseXpos];
                 System.out.println("get error " + getSwitchDes.getX());
                 switchOrigin.setSlidepoint(new Point(getSwitchDes.getX(),getSwitchDes.getY()));
-                getSwitchDes.setSlidepoint(new Point(switchOrigin.getX(),getSwitchDes.getY()));
+                getSwitchDes.setSlidepoint(new Point(switchOrigin.getX(),switchOrigin.getY()));
 //                //switchSelect = true;
                 switchOrigin.setSwitchtrig(true);
                 getSwitchDes.setSwitchtrig(true);
@@ -279,55 +280,88 @@ public class Game extends Canvas implements Runnable,MouseListener{
         }else{
             //System.out.println("switch trg = " + b.getSlidepoint().x + " " + b.getSlidepoint().y);
             Point des = b.getSlidepoint();
-            if(b.getX() > des.x){
-                if(b.getX() - 10 < des.x){
-                    System.out.println("this trig");
-                    b.setVelX(-(b.getX() - des.x));
-                    //b.setSwitchtrig(false);
-                }else {
-                    //System.out.println("come here");
-                    b.setVelX(-10);
-                    //b.setVelY(-1);
-                    g.drawImage(img, b.getX(), b.getY(), this);
+//            System.out.println("go this " + b.getX() + " to des " + b.getSlidepoint().x);
+            if(des.y == b.getY()) {
+                if (b.getX() > des.x) {
+                    if (b.getX() - 20 < des.x) {
+                        //System.out.println("this trig");
+                        b.setVelX(-(b.getX() - des.x));
+                        //g.drawImage(img, b.getX(), b.getY(), this);
+                    } else {
+                        b.setVelX(-20);
+                        //g.drawImage(img, b.getX(), b.getY(), this);
+                    }
+                } else if (b.getX() < des.x) {
+                    if (b.getX() + 20 > des.x) {
+                        //System.out.println("this trig2");
+                        b.setVelX(des.x - b.getX());
+                        //g.drawImage(img, b.getX(), b.getY(), this);
+                    } else {
+                        b.setVelX(20);
+                        //g.drawImage(img, b.getX(), b.getY(), this);
+                    }
+                } else if(b.getX() == des.x){
+                    b.setVelX(0);
+                    b.setSwitchtrig(false);
                 }
-            }else if(b.getX() > des.x){
-                if(b.getX() - 10 < des.x){
-                    System.out.println("this trig1");
-                    b.setVelX(-(b.getX() - des.x));
-                    //b.setSwitchtrig(false);
-                }else {
-                    //System.out.println("come here");
-                    b.setVelX(-10);
-                    //b.setVelY(1);
-                    g.drawImage(img, b.getX(), b.getY(), this);
-                }
-            }else if(b.getX() < des.x){
-                if(b.getX() + 10 > des.x){
-                    System.out.println("this trig2");
-                    b.setVelX(des.x - b.getX());
-                    //b.setSwitchtrig(false);
-                }else {
-                    //System.out.println("come here");
-                    b.setVelX(10);
-                    ///b.setVelY(1);
-                    g.drawImage(img, b.getX(), b.getY(), this);
-                }
-            }else if(b.getX() < des.x){
-                if(b.getX() + 10 > des.x){
-                    System.out.println("this trig3");
-                    b.setVelX(des.x - b.getX());
-                    //b.setSwitchtrig(false);
-                }else {
-                    b.setVelX(10);
-                    //b.setVelY(-1);
-                    g.drawImage(img, b.getX(), b.getY(), this);
-                }
-            }else if(b.getX() == des.x){
-                //System.out.println("come here");
-                b.setVelX(0);
-                b.setVelY(0);
-                b.setSwitchtrig(false);
             }
+//             else if(b.getX() == des.x){
+//                 //System.out.println("come here");
+//                 b.setVelY(0);
+//                 b.setVelX(0);
+//                 //g.drawImage(img, b.getX(), b.getY(), this);
+//                 b.setSwitchtrig(false);
+//             }
+            if(b.getX() == des.x) {
+                System.out.println("go this " + b.getY() + " to des " + b.getSlidepoint().y);
+                if (b.getY() > des.y) {
+                    if (b.getY() - 20 < des.y) {
+                        //System.out.println("this trig");
+                        b.setVelY(-(b.getY() - des.y));
+                        //g.drawImage(img, b.getX(), b.getY(), this);
+                    } else {
+                        System.out.println("trig this");
+                        b.setVelY(-20);
+                        //g.drawImage(img, b.getX(), b.getY(), this);
+                    }
+                } else if (b.getY() < des.y) {
+                    if (b.getY() + 20 > des.y) {
+                        //System.out.println("this trig2");
+                        b.setVelY(des.y - b.getY());
+                        //g.drawImage(img, b.getX(), b.getY(), this);
+                    } else {
+                        b.setVelY(20);
+                        //g.drawImage(img, b.getX(), b.getY(), this);
+                    }
+                } else if(b.getY() == des.y){
+                    b.setVelY(0);
+                    b.setSwitchtrig(false);
+                }
+            }
+//            else if(b.getY() == des.y){
+//                //System.out.println("come here");
+//                b.setVelX(0);
+//                b.setVelY(0);
+//                //g.drawImage(img, b.getX(), b.getY(), this);
+//                b.setSwitchtrig(false);
+//            }
+//            else if(b.getY() == des.y){
+//                //System.out.println("come here");
+//                //b.setVelX(0);
+//                b.setVelY(0);
+//                //g.drawImage(img, b.getX(), b.getY(), this);
+//                //b.setSwitchtrig(false);
+//            }
+//
+//            if(b.getY() == des.y){
+//                b.setVelX(0);
+//                //b.setVelY(0);
+//                b.setSwitchtrig(false);
+//            }
+
+            g.drawImage(img, b.getX(), b.getY(), this);
+
+
         }
     }
 }
