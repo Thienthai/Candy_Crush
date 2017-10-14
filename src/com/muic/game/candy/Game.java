@@ -167,7 +167,7 @@ public class Game extends Canvas implements Runnable,MouseListener{
     }
 
     private void tick() {
-        if(isSwitch != 0) {
+
             if(isSwitch == 1) {
                 switchOrigin = board[getMouseYpos][getMouseXpos];
             }else if(isSwitch == 2){
@@ -178,10 +178,9 @@ public class Game extends Canvas implements Runnable,MouseListener{
 //                //switchSelect = true;
                 switchOrigin.setSwitchtrig(true);
                 getSwitchDes.setSwitchtrig(true);
-//                System.out.println("switch triggered");
+                System.out.println("switch triggered");
                 isSwitch = 0;
             }
-        }
 
         for(int i = 0;i < 7;i++){
             for(int j = 0;j < 6;j++){
@@ -281,41 +280,45 @@ public class Game extends Canvas implements Runnable,MouseListener{
             //System.out.println("switch trg = " + b.getSlidepoint().x + " " + b.getSlidepoint().y);
             Point des = b.getSlidepoint();
             if(b.getX() > des.x){
-                if(b.getX() - 5 < des.x){
-                    b.setVelX(b.getX() - des.x);
-                    b.setSwitchtrig(false);
+                if(b.getX() - 10 < des.x){
+                    System.out.println("this trig");
+                    b.setVelX(-(b.getX() - des.x));
+                    //b.setSwitchtrig(false);
                 }else {
                     //System.out.println("come here");
-                    b.setVelX(-5);
+                    b.setVelX(-10);
                     //b.setVelY(-1);
                     g.drawImage(img, b.getX(), b.getY(), this);
                 }
             }else if(b.getX() > des.x){
-                if(b.getX() - 5 < des.x){
-                    b.setVelX(b.getX() - des.x);
-                    b.setSwitchtrig(false);
+                if(b.getX() - 10 < des.x){
+                    System.out.println("this trig1");
+                    b.setVelX(-(b.getX() - des.x));
+                    //b.setSwitchtrig(false);
                 }else {
                     //System.out.println("come here");
-                    b.setVelX(-5);
+                    b.setVelX(-10);
                     //b.setVelY(1);
                     g.drawImage(img, b.getX(), b.getY(), this);
                 }
             }else if(b.getX() < des.x){
-                if(b.getX() + 5 > des.x){
+                if(b.getX() + 10 > des.x){
+                    System.out.println("this trig2");
                     b.setVelX(des.x - b.getX());
-                    b.setSwitchtrig(false);
+                    //b.setSwitchtrig(false);
                 }else {
                     //System.out.println("come here");
-                    b.setVelX(5);
+                    b.setVelX(10);
                     ///b.setVelY(1);
                     g.drawImage(img, b.getX(), b.getY(), this);
                 }
             }else if(b.getX() < des.x){
-                if(b.getX() + 5 > des.x){
+                if(b.getX() + 10 > des.x){
+                    System.out.println("this trig3");
                     b.setVelX(des.x - b.getX());
-                    b.setSwitchtrig(false);
+                    //b.setSwitchtrig(false);
                 }else {
-                    b.setVelX(5);
+                    b.setVelX(10);
                     //b.setVelY(-1);
                     g.drawImage(img, b.getX(), b.getY(), this);
                 }
