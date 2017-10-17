@@ -2,22 +2,43 @@ package com.muic.game.candy;
 //update this one
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
 
-public class Game extends Canvas implements Runnable {
+public class Game extends Canvas implements Runnable,MouseListener{
 
     private boolean running = false;
+    private int change = 5;
     private Thread thread;
     private BufferedImage image = new BufferedImage(WIDTH,HEIGHT,BufferedImage.TYPE_INT_RGB);
     private BufferedImage background = null;
     BufferedImage fish = null;
     private int x = 0;
-    private int[][] board = new int[7][6];
+    private Block[][] board = new Block[7][6];
     Random rand = new Random();
+    BufferedImageLoader loader = new BufferedImageLoader();
     private boolean initRen = true;
+    private BufferedImage red = loader.loadImage("red.png");
+    private BufferedImage yellow = loader.loadImage("yellow.png");
+    private BufferedImage blue = loader.loadImage("blue.png");
+    private BufferedImage brown = loader.loadImage("brown.png");
+    private BufferedImage green = loader.loadImage("green.png");
+    private BufferedImage purple = loader.loadImage("purple.png");
+    private int getMouseXpos = -1;
+    private int getMouseYpos = -1;
+    private int isSwitch = 0;
+    private Block switchOrigin = null;
+    private Block getSwitchDes = null;
+    private int oldXpos = 0;
+    private int oldYpos = 0;
+
+    public Game() throws IOException {
+        addMouseListener(this);
+    }
 
     private synchronized void start(){
         if(running)
@@ -49,10 +70,11 @@ public class Game extends Canvas implements Runnable {
         }catch(Exception e){
             e.printStackTrace();
         }
-        for(int i = 0;i < 7;i++){
+        for(int i = 0;i < 6;i++){
             for(int j = 0;j < 6;j++){
-                int  n = rand.nextInt(6) + 1;
-                board[i][j] = n;
+                int  n = rand.nextInt(4) + 1;
+                Block b = new Block(j,i,n);
+                board[i][j] = b;
             }
         }
     }
@@ -65,10 +87,31 @@ public class Game extends Canvas implements Runnable {
         }
         Graphics g = bs.getDrawGraphics();
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
-        Candies candies = new Candies();
         g.drawImage(background, 0, 0, this);
-        g.drawRect(32,57,85,75);
-        candies.render(board, g, this);
+        for(int i = 0;i<6;i++){
+            for(int j = 0;j<6;j++){
+                Block b = board[i][j];
+                if(b.getValue() == 1){
+                    setPosition(g,b,red);
+                }
+                if(b.getValue() == 2){
+                    setPosition(g,b,blue);
+                }
+                if(b.getValue() == 3){
+                    setPosition(g,b,green);
+                }
+                if(b.getValue() == 4){
+                    setPosition(g,b,yellow);
+                }
+                if(b.getValue() == 5){
+                    setPosition(g,b,brown);
+                }
+                if(b.getValue() == 6){
+                    setPosition(g,b,purple);
+                }
+            }
+
+        }
         g.dispose();
         bs.show();
     }
@@ -88,7 +131,7 @@ public class Game extends Canvas implements Runnable {
             delta += (now - lastTime) / ns;
             lastTime = now;
             if(delta >= 1){
-                tick();
+                boardUpdate();
                 updates++;
                 delta--;
             }
@@ -108,11 +151,34 @@ public class Game extends Canvas implements Runnable {
         stop();
     }
 
-    private void tick() {
+    private void boardUpdate() {
 
+            if(isSwitch == 1) {
+                switchOrigin = board[getMouseYpos][getMouseXpos];
+                oldXpos = getMouseXpos;
+                oldYpos = getMouseYpos;
+            }else if(isSwitch == 2){
+                getSwitchDes = board[getMouseYpos][getMouseXpos];
+                switchOrigin.setSlidepoint(new Point(getSwitchDes.getX(),getSwitchDes.getY()));
+                getSwitchDes.setSlidepoint(new Point(switchOrigin.getX(),switchOrigin.getY()));
+//                //switchSelect = true;
+                Block tmp;
+                tmp = board[oldYpos][oldXpos];
+                board[oldYpos][oldXpos] = board[getMouseYpos][getMouseXpos];
+                board[getMouseYpos][getMouseXpos] = tmp;
+                switchOrigin.setSwitchtrig(true);
+                getSwitchDes.setSwitchtrig(true);
+                isSwitch = 0;
+            }
+
+        for(int i = 0;i < 6;i++){
+            for(int j = 0;j < 6;j++){
+                board[i][j].tick();
+            }
+        }
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) throws IOException {
         Game game = new Game();
         game.setPreferredSize(new Dimension(700,600));
         game.setMaximumSize(new Dimension(700,600));
@@ -131,4 +197,109 @@ public class Game extends Canvas implements Runnable {
     }
 
 
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+        if(34 <= e.getX() && e.getX() <= 118){
+            getMouseXpos = 0;
+        }else if(121 <= e.getX() && e.getX() <= 201){
+            getMouseXpos = 1;
+        }else if(206 <= e.getX() && e.getX() <= 287){
+            getMouseXpos = 2;
+        }else if(291<= e.getX() && e.getX() <= 372){
+            getMouseXpos = 3;
+        }else if(377 <= e.getX() && e.getX() <= 455){
+            getMouseXpos = 4;
+        }else if(464 <= e.getX() && e.getX() <= 541) {
+            getMouseXpos = 5;
+        }
+
+        if(61 <= e.getY() && e.getY() <= 131){
+            getMouseYpos = 0;
+            isSwitch += 1;
+        }else if(137 <= e.getY() && e.getY() <= 204){
+            getMouseYpos = 1;
+            isSwitch += 1;
+        }else if(208 <= e.getY() && e.getY() <= 273){
+            getMouseYpos = 2;
+            isSwitch += 1;
+        }else if(281 <= e.getY() && e.getY() <= 346){
+            getMouseYpos = 3;
+            isSwitch += 1;
+        }else if(350 <= e.getY() && e.getY() <= 415){
+            getMouseYpos = 4;
+            isSwitch += 1;
+        }else if(420 <= e.getY() && e.getY() <= 486){
+            getMouseYpos = 5;
+            isSwitch += 1;
+        }
+        //System.out.println("X = " + getMouseXpos + ", Y = " + getMouseYpos);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    public void setPosition(Graphics g,Block b,BufferedImage img){
+        Point des = b.getSlidepoint();
+        if(!b.isSwitchtrig){
+            g.drawImage(img,b.getX(),b.getY(),this);
+        }else{
+            if(des.y == b.getY()) {
+                if (b.getX() > des.x) {
+                    if (b.getX() - 20 < des.x) {
+                        b.setVelX(-(b.getX() - des.x));
+                    } else {
+                        b.setVelX(-20);
+                    }
+                } else if (b.getX() < des.x) {
+                    if (b.getX() + 20 > des.x) {
+                        b.setVelX(des.x - b.getX());
+                    } else {
+                        b.setVelX(20);
+                    }
+                } else if(b.getX() == des.x){
+                    b.setVelX(0);
+                    b.setSwitchtrig(false);
+                }
+            }
+            if(b.getX() == des.x) {
+                //System.out.println("go this " + b.getY() + " to des " + b.getSlidepoint().y);
+                if (b.getY() > des.y) {
+                    if (b.getY() - 20 < des.y) {
+                        b.setVelY(-(b.getY() - des.y));
+                    } else {
+                        //System.out.println("trig this");
+                        b.setVelY(-20);
+                    }
+                } else if (b.getY() < des.y) {
+                    if (b.getY() + 20 > des.y) {
+                        b.setVelY(des.y - b.getY());
+                    } else {
+                        b.setVelY(20);
+                    }
+                } else if(b.getY() == des.y){
+                    b.setVelY(0);
+                    b.setSwitchtrig(false);
+                }
+            }
+            g.drawImage(img, b.getX(), b.getY(), this);
+        }
+    }
 }
